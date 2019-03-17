@@ -27,7 +27,7 @@ evidenceStore = {}
 ID = {}
 
 host='0.0.0.0'
-port = 7000  # port 7000 is the web user, 5000 is QANTA, 8000 is the non-qanta server
+port = 7000  # port 7000 is the web user, 6000 is QANTA, 8000 is the non-qanta server
 debug = False 
 
 submitted_answers = pickle.load(open('submitted_answers.pkl','rb'))
