@@ -6,9 +6,32 @@ This is an interactive user interface for creating question-answer pairs that ar
 
 See the [competition site](https://sites.google.com/view/qanta/home) for more information on our Question Answering competition, and [our paper](https://arxiv.org/abs/1809.02701) for more information on the project. 
 
+## Running The Interface
+
+I recommend using ```screen``` to launch everything, so you don't need a bunch of terminals.
+
+To run the server with multiple workers, go the the folder ```/interface```, and run using gunicorn (this command launches 4 parallel workers):  ```gunicorn --bind 0.0.0.0:7000 web_server:app --workers 4``` 
+
+Then launch the non_qanta server, inside ```/non_qanta``` run ```python server.py```.  
+
+Then you need to launch QANTA. 
+
+I use the following code to launch the RNN guesser.
+
+```
+import qanta.guesser.rnn 
+RnnGuesserLocal = qanta.guesser.rnn.RnnGuesser.load('output/guesser/7')
+RnnGuesserLocal.web_api()
+```
+
+
 ## Project Structure
 
 There are three main pieces of code that run the service. Each one is described below. There is additional parsing and postprocessing code described at the end.
+
+import qanta.guesser.rnn
+RnnGuesserLocal = qanta.guesser.rnn.RnnGuesser.load('output/guesser/7')
+RnnGuesserLocal.web_api()
 
 ## Main Interface
 
@@ -19,8 +42,6 @@ This is where most of the magic happens, ```/interface```.
 * ```static``` contains the javascript functions and css files. ```static/js/scripts.js``` is the file that does most of the interfaces functionality
 * ```static/answers.json``` contains all of the possible answers that are system can guess on (extracted from the training data portion of the Quiz Bowl data).
 * ```logs```, ```log_list```, ```evidenceStore``` are all folders that store logs about the user's actions and submitted questions. This will be phased out in place of a database.
-
-To run the server with multiple workers, launch it using gunicorn (this command launches 4 parallel workers): ```gunicorn --bind 0.0.0.0:7000 adversarial:app --workers 4``` 
 
 ## Non-QANTA Server
 
