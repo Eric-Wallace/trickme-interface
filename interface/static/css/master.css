@@ -1,0 +1,187 @@
+/*  Contains some css for the Slider used to select how often to update, twitter type ahead, and the
+highlighting inside the Evidence section */
+
+/* The slider that you use to handle how often you want to update the interface. */
+.slidecontainer {
+    width: 100%; /* Width of the outside container */
+}
+
+/* The slider itself */
+.slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width:100%; /* Full-width */
+    height: 25px; /* Specified height */
+    background: #d3d3d3; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */ 
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb {
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    background: #4CAF50; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+
+/* Twitter typeahead cursor*/
+.tt-cursor {
+    background-color: #3576be !important;
+    color: #FFFFFF !important;
+}
+
+/* Forget what these do, TODO can they be deleted? */
+.border-between > [class*='col-']:before {
+   background: #e3e3e3;
+   bottom: 0;
+   content: " ";
+   left: 0;
+   position: absolute;
+   width: 1px;
+   top: 0;
+}
+
+.border-between > [class*='col-']:first-child:before {
+   display: none;
+}
+
+
+
+/* Used in the Sentence/Evidence boxes */ 
+.rowFlex {
+  display: flex;
+}
+
+.rowFlex > div {
+  flex: 1;
+  background: white;
+  border: 1px solid lightgrey;
+}
+
+
+
+/* The following defines the colors for the
+highlighted words inside the "Evidence" section of the interface. The
+org, norp, and person names mean absolutely nothing. They
+are there because I copied them from an online demo that used that
+name. The different numbers, i.e. norp2 define different shades
+that indicate how frequently that piece of Evidence appears in the 4 
+different evidence panes (the ones you can cycle through by pressing
+"more evidence") */
+
+/* TODO, I am pretty sure I am not using some of these.*/
+[data-entity][data-entity="org"] {
+    background: rgba(67,198,252,0.2);
+    border-color: #43c6fc;
+}
+
+[data-entity][data-entity="norp1"] {
+    background: rgba(224,0,132,0.1);
+    border-color: #e00084;
+}
+
+[data-entity][data-entity="org1"] {
+    background: rgba(67,198,252,0.1);
+    border-color: #43c6fc;
+}
+
+[data-entity][data-entity="person1"] {
+    background: rgba(166,226,45,0.1);
+    border-color: #a6e22d;
+}
+
+[data-entity][data-entity="norp2"] {
+    background: rgba(224,0,132,0.2);
+    border-color: #e00084;
+}
+
+[data-entity][data-entity="org2"] {
+    background: rgba(67,198,252,0.2);
+    border-color: #43c6fc;
+}
+
+[data-entity][data-entity="person2"] {
+    background: rgba(166,226,45,0.2);
+    border-color: #a6e22d;
+}
+
+[data-entity][data-entity="norp3"] {
+    background: rgba(224,0,132,0.5);
+    border-color: #e00084;
+}
+
+[data-entity][data-entity="org3"] {
+    background: rgba(67,198,252,0.5);
+    border-color: #43c6fc;
+}
+
+[data-entity][data-entity="person3"] {
+    background: rgba(166,226,45,0.5);
+    border-color: #a6e22d;
+}
+
+[data-entity][data-entity="norp4"] {
+    background: rgba(224,0,132,0.9);
+    border-color: #e00084;
+}
+
+[data-entity][data-entity="org4"] {
+    background: rgba(67,198,252,0.9);
+    border-color: #43c6fc;
+}
+
+[data-entity][data-entity="person4"] {
+    background: rgba(166,226,45,0.9);
+    border-color: #a6e22d;
+}
+
+
+[data-entity][data-entity="norp-muted"] {
+    background: rgba(224,0,132,0.01);
+    border-color: #e000848a;
+    color: gray;
+}
+
+[data-entity][data-entity="org-muted"] {
+    background: rgba(67,198,252,0.01);
+    border-color: #43c6fc;
+    color: gray;
+}
+
+[data-entity][data-entity="person-muted"] {
+    background: rgba(166,226,45,0.01);
+    border-color: #a6e22d;
+    color: gray;
+}
+
+[data-entity] {
+  padding: 0.25em 0.35em;
+      margin: 0 0.25em;
+    line-height: 1;
+    display: inline-block;
+    border-radius: 0.25em;
+    border: 1px solid;
+}
+
+[data-entity][data-entity="buzz"] {
+    background: rgba(228,2,2,0.67);
+    border-color: #634646;
+}

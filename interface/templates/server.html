@@ -1,0 +1,477 @@
+<!-- This is the main HTML file for the entire site.  The end contains
+    some functionality for when the user logs in and some fuzzy search setup.-->
+
+    <html lang="en">
+
+    <head>
+        <link rel="icon" href="https://www.hopkinsschools.org/sites/default/files/public/styles/detail/public/images/news/quizbowl-thumb.jpg?itok=2jVc6r6Z">
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <title>Trick QANTA</title>
+        <meta name="description" content="Trick Me If You Can: Adversarial Writing of Trivia Questions">
+        <meta name="author" content="Eric-Wallace">
+
+        <!-- JS libraries from the web -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.3/umd/popper.min.js" integrity="sha384-vFJXuSJphROIrBnz7yo7oB41mKfc8JzQZiCq4NCceLEaO4IHwicKwpJf9c9IpFgh" crossorigin="anonymous"></script>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
+        <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
+
+        <!-- imported CSS/Js files from static -->
+        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='css/master.css') }}" />
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
+        <link href="{{ url_for('static', filename='css/introjs.css') }}" rel="stylesheet">
+        <script src="{{ url_for('static', filename='js/intro.js') }} "></script>
+
+        <!-- twitter typeahead styles -->
+        <script src="{{ url_for('static', filename='js/typeahead.jquery.min.js') }} "></script>
+        <script src="{{ url_for('static', filename='js/FuzzySearch.min.js') }} "></script>
+        <link href="{{ url_for('static', filename='css/FuzzySearch.css') }} " rel="stylesheet">
+
+</head>
+<body>   
+
+
+    <!-- Modal that pops up when the user presses edit a question in the submit box-->
+    <div id="editModal" class="w3-modal">
+        <div class="w3-modal-content w3-animate-zoom">
+            <header class="w3-container w3-teal"> 
+              <h2>Pick the question you would like to edit</h2>
+          </header>
+          <div class="w3-container">
+            <br>
+            <p style="text-align:left">
+                <div id ="pastQuestionsDynamic"> </div>                    
+            </p> 
+
+            <br>                   
+            <button type="button" class="btn btn-info w3-teal float-right" onClick="continuePlaying();"> Cancel </button>
+            <br><br> 
+        </div> 
+    </div> 
+</div>
+
+<!-- Modal that appears when the user presses finish game -->
+<div id="exitModal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-zoom">
+        <header class="w3-container w3-teal"> 
+          <h2>Thank you for playing</h2>
+      </header>
+      <div class="w3-container">
+        <br>
+        <p style="text-align:left">
+            <h6 id = "numQuestions"> </h6>
+        </p> 
+
+        <br>       
+        <button onclick="downloadSubmitted();" type="button" class="btn btn-info w3-teal"> Download Questions</button>  <button onclick="signOut();" id = "signoutButton" style='left: 10px;' type="button" class="btn btn-info w3-teal"> Sign Out</button>
+        <button type="button" class="btn btn-info w3-teal float-right" onClick="continuePlaying();"> Continue Playing </button>
+        <br><br> 
+    </div>
+</div>
+</div>
+
+<!-- Modal that appears to login to the site -->
+<div id="overviewModal" class="w3-modal">
+    <div class="w3-modal-content w3-animate-zoom">
+        <header class="w3-container w3-teal"> 
+          <h3>Trick Me If You Can: Adversarial Writing of Trivia Questions</h3>
+      </header>
+      <div class="w3-container">
+        <br>
+        <p style="text-align:left">
+            <h6> Writing questions for Quiz Bowl is not easy! This interface is here to help you write better questions with the help of Machine Learning. 
+            </h6>
+        </p> 
+
+        <p style="text-align:left">
+            <h6>
+                The interface is integrated with a computerized Question Answering system. It will provide its best guesses for your questions, <b>try to trick it!</b> You can see the evidence it may be using for making its guesses.
+            </h6>
+        </p>
+
+    <p style="text-align:left">
+        <h6>
+            Create an account or login using a username and password below. We will be using the email you enter for prizes! See <b><a target="_blank" style="color: blue;" href="https://sites.google.com/view/qanta/dec-15-2018">this website</a> </b> for details about our December 15th event.
+        </h6>
+    </p>
+
+    <p style="text-align:left">
+    </p>
+
+    <h6 id="invalidEmail" style="display:inline-block;"></h6>
+
+    <input id="email_area" type="email" class="form-control" name="email" placeholder="Email">
+    <br>
+    <input id="password_area" type="password" class="form-control" name="password" placeholder="Password">
+    <br>
+</div>
+</div>
+</div>
+
+<!-- The left pane where the Guesses from QANTA appear. When you click on an individual row of the Guesses, it will change the Evidence
+box to show the evidence for that particular guess. There is also an option sixth Guess position, that appears when the user's guess is in
+the top 20 predictions, but not in the top 5. -->
+<div class="container-fluid" data-step="1" data-intro="Welcome! Please follow this
+tutorial to help get familiar with the interface." data-position='auto'>
+<ul class="breadcrumb">Trick Me If You Can: Adversarial Writing of Trivia Questions</ul>
+<div class="row">
+    <div class="col-md-3">
+        <div id="guesses_card" class="card card-outline-primary mt-3"  data-step="3" data-intro="<b>Guesses</b> from
+            an AI system are shown here along with their Wikipedia link. Try to trick it!">
+            <div class="card-body mx-2 my-2">
+                <h4 class="card-title">Machine Guesses    <button onclick="predict();search();" type="button" id = "updateButton" class="btn btn-success" style="margin-left:10px;"> Update All </button></h4>
+                <table class="table table-hover" id="guesses_table">
+                    <thead>
+                        <tr> <th> #</th> <th> Guess </th> <th id ="header2"> </th> </tr>
+                    </thead>
+                    <tbody>
+                        <tr> <td onClick="storeOne();"> 1 </td> <td onClick="storeOne();"> <h7 id="Guess1" style="display:inline-block;"></h7>
+                        </td> <td onClick="storeOne();"> <h7 id="Score1" style="display:inline-block;"></h7>
+                        </td> </tr>
+                        <tr> <td onClick="storeTwo();"> 2 </td> <td onClick="storeTwo();"> <h7 id="Guess2" style="display:inline-block;"></h7>
+                        </td> <td onClick="storeTwo();"> <h7 id="Score2" style="display:inline-block;"></h7>
+                        </td> </tr>
+                        <tr> <td onClick="storeThree();"> 3 </td> <td onClick="storeThree();"> <h7 id="Guess3" style="display:inline-block;"></h7>
+                        </td> <td onClick="storeThree();"> <h7 id="Score3" style="display:inline-block;"></h7>
+                        </td> </tr>
+                        <tr> <td onClick="storeFour();"> 4 </td> <td onClick="storeFour();"> <h7 id="Guess4" style="display:inline-block;"></h7>
+                        </td> <td onClick="storeFour();"> <h7 id="Score4" style="display:inline-block;"></h7>
+                        </td> </tr>
+                        <tr> <td onClick="storeFive();"> 5 </td> <td onClick="storeFive();"> <h7 id="Guess5" style="display:inline-block;"></h7>
+                        </td> <td onClick="storeFive();"> <h7 id="Score5" style="display:inline-block;"></h7>
+                        </td> </tr>
+                        <tr> <td onClick="storeSix();"> <h7 id="AnswerPosition" style="display:inline-block;"></h7> </td> <td onClick="storeSix();"> <h7 id="AnswerGuess" style="display:inline-block;"></h7>
+                        </td> <td onClick="storeSix();"> <h7 id="AnswerScore" style="display:inline-block;"></h7>
+                        </td> </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+<!-- The Setting Box in the bottom left of the inferace. Has check boxes and sliders to adjust setting.
+Also has the newQuestion() button, which restarts with a new question (new unique question if you are in unique mode, new rewrite question
+if you are in rewrite mode). Also has a button to switch which mode you are in (unique or rewrite).-->
+<div id="instruction_card" class="card card-outlin-primary mt-3">
+    <div class="card-body mx-2 my-2">
+        <h5 class="card-title">
+            <i class="fa fa-info-circle" aria-hidden="true"></i> Settings
+        </h5>
+        <!--<div class="checkbox">
+            <label><input type="checkbox" id="no_public_data" >Don't release questions (releasing Aug. 15th) </label>
+        </div> -->
+        <!-- Disable feature of highlighting words inside text boxes, didn't work well when I tried. It was also kind of ugly -->
+        <!-- <div class="checkbox">
+            <label><input type="checkbox" id="highlight_textbox">Highlight words inside Question Box</label>
+        </div> -->
+        <div class="checkbox">
+            <label><input type="checkbox" id="enable_auto_updates" checked>Provide Automatic Updates Every  <h7 id="range_selected" style="display:inline-block;"></h7> Words</label>
+        </div>
+
+        <div class="slidecontainer">
+            <input type="range" min="1" max="10" value="5" class="slider" id="myRange" style='width:200px'>
+        </div>
+        <br> 
+        <button onclick="dump_rewrite();rewrite();" type="button" class="btn btn-success" id="generate_or_not" data-step="7" data-intro="You can also <b>rewrite</b> the wording of an existing Quiz Bowl question instead of writing your own from scratch."> </button>
+        <br>
+        <br>
+        <button onclick="newQuestion();" type="button" class="btn btn-success" id="new_question_button" data-step="8" data-intro="You can restart with a new question if you don't like the one you have."> New Question</button>
+    </div>
+</div>
+
+</div>
+<div class="col-md-6">  <!-- End of left column -->
+
+    <!-- Modal that appears to enter the answer to your question. Also contains boiler plate copy pasted code to do twitter typeahead an fuzzy search for the answer -->
+    <div id="myModal" class="w3-modal">
+        <div class="w3-modal-content w3-animate-zoom">
+            <header class="w3-container w3-teal"> 
+              <h2>Let's start with the answer to your question!</h2>
+          </header>
+          <div class="w3-container">
+              <h6 id="invalidPage" style="position: relative;
+              display: inline-block;"></h6>
+              <br>
+              <div class="typeahead" stype="width: 70%;"> <span
+                class="twitter-typeahead" style="position: relative;
+                display: inline-block;"><input
+                class="twitter-typeahead tt-hint" autocomplete="off"
+                type="text" readonly="" spellcheck="false" tabindex="-1"
+                style="position: absolute; top: 0px; left: 0px; border-color:
+                transparent; box-shadow: none; opacity: 1; background: none 0% 0% /
+                auto repeat scroll padding-box border-box rgb(255, 255, 255);"
+                dir="ltr"><input id="answer_area" class="twitter-typeahead tt-input"
+                name="answer_area" type="text" placeholder="Press enter to submit" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: system-ui; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><div class="tt-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"></div></span></div>  
+
+                <div class="dropdown" style="display:inline-block;">
+                <button class="btn btn-info dropdown-toggle" type="button" id="category_selector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category
+                </button>
+                  <div class="dropdown-menu" aria-labelledby="categoryDropdown">
+                    <a class="dropdown-item" onclick="categoryOne();" id = "category_selector_1">Literature</a>
+                    <a class="dropdown-item" onclick="categoryTwo();" id = "category_selector_2">History</a>
+                    <a class="dropdown-item" onclick="categoryThree();" id = "category_selector_3">Science</a>
+                    <a class="dropdown-item" onclick="categoryFour();" id = "category_selector_4">Fine Arts</a>                                
+                    <a class="dropdown-item" onclick="categoryFive();" id = "category_selector_5">Religion, Mythology, Philosophy, and Social Science</a>
+                    <a class="dropdown-item" onclick="categorySix();" id = "category_selector_6">Current Events, Geography, and General Knowledge</a>
+                </div>
+                </div>
+
+
+                <button onclick="exitGame();" id = "exitButton" style='left: 10px; visibility:hidden' type="button" class="btn btn-info float-right w3-teal"> Exit and Finish</button>
+                <button onclick="editExisting();" id = "editButton" style='visibility:hidden' type="button" class="btn btn-info w3-teal"> Edit Your Submissions</button>
+                <button onclick="rewriteExisting();" id = "modalRewriteButton" style='visibility:hidden' type="button" class="btn btn-info w3-teal"> Rewrite Existing Question</button> 
+                <br><br>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- The main text box where you type your quesiton into. Also contains the submit button. Also contains the bellBar, which is where the Bell comes up and the corresponding phrase when QANTA wants to buzz-->
+    <div id="matches_card" data-step="2" data-intro="You can type your Quiz Bowl question in the box here.">
+
+        <h4 class="card-title"><h7 id="question_answer" style="display:inline-block;"></h7> <button onclick="submit();" type="button" id = "submitButton" class="btn btn-info float-right">Submit <i class ="fa fa-upload blackiconcolor "> </i> </button>  </h4> <br>            
+        <div contenteditable="true" id = "questionText"  class="form-control" style="font-size: 18px; color:#000000; height: auto; min-height: 150px;" rows="5" spellcheck = "true" id="questionText" placeholder="Your question..">  </div>
+        <br>
+        <h7 id="bellBar" data-step="4" data-intro="The <b><mark data-entity=buzz>Buzz</b></mark> indicates where the AI system would buzz on your question." style="display:inline-block;"></h7> 
+    </div>
+
+    <!-- The area where the evidence is shown. Also contains the dropbown button to select evidence, the moreEvidence button.-->
+    <div id="matches_card" class="card card-outline-primary mt-3" data-step="5" data-intro="The <mark data-entity=norp2> Highlights </mark> show the evidence the AI system is using for its predictions. Frequent evidence is <mark data-entity=norp4> emphasized </mark>. It will gray out words that aren't needed for its prediction. Try to make your question unlike past Quiz Bowl questions or Wikipedia (remove the highlighted words!).">
+        <div class="card-body mx-2">
+            <h4 class="card-title">Evidence <span>for <div class="dropdown" style="display:inline-block;">
+              <button class="btn btn-info dropdown-toggle" type="button" id="guess_of_matches" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+              </button>
+              <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+                <a class="dropdown-item" onclick="storeOne();" id = "Guess1_2"></a>
+                <a class="dropdown-item" onclick="storeTwo();" id = "Guess2_2"></a>
+                <a class="dropdown-item" onclick="storeThree();" id = "Guess3_2"></a>
+                <a class="dropdown-item" onclick="storeFour();" id = "Guess4_2"></a>
+                <a class="dropdown-item" onclick="storeFive();" id = "Guess5_2"></a>
+                <a class="dropdown-item" onclick="storeSix();" id = "AnswerGuess_2"></a>
+            </div>
+        </div>
+    </span>
+
+    <!-- <button onclick="moreEvidence();" id = "moreEvidence" type="button" style = "font-size: 15px;" class="btn btn-info float-right"> More Evidence </button> </h4>    -->
+
+    <!-- Evidence is the evidence from the training data. Sentences are the sentences from your question-->
+<!--    <div class = "row"> <div class="col-lg-6 text-center"><b>Your Question</b><h7 style="display:inline-block;"></h7> </div>  
+    <div class="col-lg-6 text-center"><b>Evidence</b><h7 style="display:inline-block;"></h7> </div> </div> -->
+
+    <div class = "row"> <div class="col-lg-12 text-center"><b>Evidence</b><h7 style="display:inline-block;"></h7> </div> </div>
+
+    <div class = "rowFlex"> <div class="col-lg-12"> <h7 id="Sentence1" ></h7> </div> 
+    <!-- <div class="col-lg-6"><h7 id="Evidence1" style="display:inline-block;"></h7> </div> --> 
+    </div>
+<div class = "rowFlex"> <div class="col-lg-12"><h7 id="Sentence2"></h7> </div> 
+<!-- <div class="col-lg-6"><h7 id="Evidence2" style="display:inline-block;"></h7> </div> -->
+</div>
+<div class = "rowFlex"> <div class="col-lg-12"><h7 id="Sentence3"></h7> </div> 
+<!-- <div class="col-lg-6"><h7 id="Evidence3" style="display:inline-block;"></h7> </div> -->
+</div>
+<div class = "rowFlex"> <div class="col-lg-12"><h7 id="Sentence4"></h7> </div> 
+<!-- <div class="col-lg-6"><h7 id="Evidence4" style="display:inline-block;"></h7> </div> -->
+</div>
+<div class = "rowFlex"> <div class="col-lg-12"><h7 id="Sentence5"></h7> </div> 
+<!-- <div class="col-lg-6"><h7 id="Evidence5" style="display:inline-block;"></h7> </div> -->
+</div>
+</div>
+</div>
+
+<h7 id='questionLengthCount' class = 'float-right'></h7> 
+</div>
+
+
+<div class="col-md-3">  <!-- End of the middle column -->
+
+    <!-- The top right area where you see related questions -->  
+    <div class="card card-outline-primary mt-3" data-step="9" data-intro="You can read past Quiz Bowl Questions here, they will be ranked by relavence to your current question">
+        <div class="card-body mx-2">
+            <h4 class="card-title" id ="question_answer_title"> Past Questions 
+                <button onclick="search();" type="button" style = "margin-left: 10px;" class="btn btn-info btn-lg" id = "searchButton">  <i class ="fa fa-search"> </i> 
+                </button> </h4> <br>
+                <div id ="dynamicInput">  <!-- This grows dynamically to hold the related questions -->
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Bottom right area where the Submitted questions are. -->
+        <div id="players_card" class="card card-outline-primary mt-3" data-step="11" data-intro="View or edit your submitted questions here. <br> <br> Press <code>Done</code> to Begin">
+            <div class="card-body mx-2 my-2">              
+              <h4 class="card-title">Submitted Questions <button class="btn btn-info" style = "margin-left: 10px" type="button" onclick="downloadSubmitted();"> Download </button> </h4>
+              <br>
+              <div id ="pastQuestionsDynamic2">                     
+              </div>
+          </div>
+      </div>
+  </div>
+</div>
+
+<button onclick="predict();" id = "evidenceButton" type="button" style = "visibility: hidden;" class="btn btn-info btn-lg float-right">  <i class ="fa fa-search"> </i> </button> </h4>
+
+</div>
+
+<script>
+
+    // If the user didn't come from https, then redirect them to HTTPS
+    var loc = window.location.href+'';
+    if (loc.indexOf('http://')==0){
+        window.location.href = loc.replace('http://','https://');
+    }
+    if (loc.indexOf('write')==0){
+        window.location.href = loc.replace('write','https://write');
+    }
+
+    // for the slider underneath automatic updates
+    var slider = document.getElementById("myRange");
+    var output = document.getElementById("range_selected");
+    output.innerHTML = "<b>" + slider.value + "</b>"; // Display selected slider value in range_selected
+
+    // Update the current slider value (each time you drag the slider handle)
+    slider.oninput = function() {
+        output.innerHTML = "<b>" + this.value + "</b>";
+    }
+
+    // when the user types something in the box, allow all of the buttons to be pressed again.
+    // Also handles automatic updating of the box if they have the automatic box checked 
+    var curr_question_length = 0;
+    var timeout = null;
+    jQuery('#questionText').on('input', function() {        
+        onInput();
+    });    
+    jQuery('#questionText').on('paste', function() {        
+        onInput();
+    });    
+    function onInput(){
+        var text = document.getElementById("questionText").textContent;
+        if (text.length < 200 || text.length > 700){
+            document.getElementById('questionLengthCount').innerHTML = '<font color=\"red\">Question Length: ' + String(text.length) + '</font>';
+        }
+        else {
+            document.getElementById('questionLengthCount').innerHTML = '<font color=\"green\">Question Length: ' + String(text.length) + '</font>';
+	}
+       
+        $('#updateButton').prop('disabled',false).css('opacity',1.0);
+        $('#submitButton').prop('disabled',false).css('opacity',1.0);
+    if(document.getElementById('enable_auto_updates').checked) {  // if automatic button is checked
+        var slider = parseInt(document.getElementById("myRange").value);        
+        var temp = document.getElementById("questionText").innerHTML;
+        var new_question_length = temp.split(" ").length; 
+
+        // checks if the current question they are typing is greater than the automatic
+        // update threshold, and if so, it calls predict, evidence and breakIt.
+        if (new_question_length > (curr_question_length + slider) || new_question_length < (curr_question_length - slider)){
+            clearTimeout(timeout);
+
+                    // Make a new timeout set to go off in 40ms. The 40ms is the wait time from when the user last pressed a key and the automatic update happens. I like a delay so if your typing fast, you don't get a bunch of updates happening
+                    timeout = setTimeout(function () {
+                        search();
+                        predict();                        
+                        curr_question_length = new_question_length;
+                    }, 40); 
+                }
+            }
+        }
+
+    // handles login, the overview form, tutorial, etc.
+    $(document).ready(function(){
+        $('#submitButton').prop('disabled',true).css('opacity',0.5);
+
+        // initialize the entities to blank
+        var myCookie = Cookies.get('email');
+        document.getElementById("generate_or_not").innerHTML = "Modify Existing Question";   
+        document.getElementById("Guess1").innerHTML = " ";
+        document.getElementById("Guess2").innerHTML = " ";
+        document.getElementById("Guess3").innerHTML = " ";
+        document.getElementById("Guess4").innerHTML = " ";
+        document.getElementById("Guess5").innerHTML = " ";
+        document.getElementById("AnswerGuess").innerHTML = " ";
+        
+        // if the cookie is undefined or BEGIN_EMAIL, then its their first login or they have cleared their cache. 
+        if (typeof myCookie === "undefined" || myCookie == "BEGIN_EMAIL") {
+            Cookies.set('email', "BEGIN_EMAIL", {expires: 2});
+
+            // for the demo, we set rewrite to True, because it looks nice when you rewrite a question  
+            Cookies.set('rewrite_question', 'true', {expires: 1});  
+            fillQuestionText(); // load a new question 
+            document.getElementById('overviewModal').style.display = "block"; 
+
+            document.getElementById("email_area").focus();  // put cursor inside email area
+            Cookies.set('rewrite_question', 'false', {expires: 1}); // turn rewrite question off because unique question is default
+
+            // if they hit enter on password, then make sure their email is a valid email, and if so then
+            // close the email modal, and launch the introduction tutorial
+            document.getElementById("password_area").addEventListener("keyup", function(event) {
+               if (event.keyCode === 13) {                    
+                email_value = document.getElementById("email_area").value;
+                validateEmail(email_value);                
+            }
+        })
+
+            // If they press enter on the email area, do the exact same thing as password. The inside of the if statement should call a common function.
+            document.getElementById("email_area").addEventListener("keyup", function(event) {
+               if (event.keyCode === 13) { // if they hit enter                    
+                email_value = document.getElementById("email_area").value;
+                validateEmail(email_value);                
+            }
+        })
+
+
+        }
+
+        // if they have been logged into the site before, then just set the defaults and start 
+        else {
+            Cookies.set('rewrite_question', 'false', {expires: 1});
+            document.getElementById("exitButton").style.visibility="visible";  
+            document.getElementById("editButton").style.visibility="visible";
+            document.getElementById("modalRewriteButton").style.visibility="visible";
+            begin();
+            refresh();
+        }
+    });
+
+///////// FuzzySearch Autocomplete  ///////// 
+//var answer_json_dir = "http://localhost:7000/static/answers.json"; // if developing locally, use localhost
+var answer_json_dir = "https://write.qanta.org/static/answers.json";
+var fuzzyhound = new FuzzySearch();
+fuzzyhound.setOptions({
+    score_test_fused: true
+});
+
+$('#answer_area').typeahead({
+    minLength: 2,
+    highlight: false, //let FuzzySearch handle highlight    
+}, {
+    name: 'answers',
+    source: fuzzyhound,
+    templates: {
+        suggestion: function(result) {
+            return "<div>" + fuzzyhound.highlight(result) + "</div>"
+        }
+    }
+});
+
+$.ajaxSetup({
+    cache: true
+});
+
+function setsource(url, keys, output) {
+    $.getJSON(url).then(function(response) {
+        fuzzyhound.setOptions({
+            source: response,
+            keys: keys,
+            output_map: output
+        })
+    });
+}
+setsource(answer_json_dir);
+
+</script>
+</body>
+</html>
