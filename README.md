@@ -12,7 +12,9 @@ I recommend using ```screen``` to launch everything, so you don't need a bunch o
 
 To run the server with multiple workers, go the the folder ```/interface```, and run using gunicorn (this command launches 4 parallel workers):  ```gunicorn --bind 0.0.0.0:7000 web_server:app --workers 4``` 
 
-Then launch the non_qanta server, inside ```/non_qanta``` run ```python server.py```.  
+Then launch the non_qanta server, inside ```/non_qanta``` run ```python server.py```.
+
+And download the `qanta.2018.04.18.sqlite3` from [QANTA](https://github.com/Pinafore/qb)
 
 Then you need to launch QANTA. I use the following code to launch the RNN guesser.
 ```
