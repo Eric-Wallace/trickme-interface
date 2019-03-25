@@ -8,29 +8,26 @@ See the [competition site](https://sites.google.com/view/qanta/home) for more in
 
 ## Running The Interface
 
-I recommend using ```screen``` to launch everything, so you don't need a bunch of terminals.
+1. I recommend using `screen`/`tmux` to launch everything, so you don't need a bunch of terminals.
+2. Run `mkdir interface/evidenceStore interface/logs, interface/log_list`
+3. To run the server with multiple workers, go the the folder ```/interface```, and run using gunicorn (this command launches 4 parallel workers):  ```gunicorn --bind 0.0.0.0:7000 web_server:app --workers 4``` 
+4. Then launch the non_qanta server, inside ```/non_qanta``` run ```python server.py```.
+5. And download the `qanta.2018.04.18.sqlite3` from [QANTA](https://github.com/Pinafore/qb)
 
-To run the server with multiple workers, go the the folder ```/interface```, and run using gunicorn (this command launches 4 parallel workers):  ```gunicorn --bind 0.0.0.0:7000 web_server:app --workers 4``` 
 
-Then launch the non_qanta server, inside ```/non_qanta``` run ```python server.py```.
-
-And download the `qanta.2018.04.18.sqlite3` from [QANTA](https://github.com/Pinafore/qb)
-
-Then you need to launch QANTA. I use the following code to launch the RNN guesser.
+Then you need to launch QANTA. I use the following code to launch the RNN guesser. If you don't have a trained model you can use our docker container instead by running `docker TODO`
 ```
 import qanta.guesser.rnn 
-RnnGuesserLocal = qanta.guesser.rnn.RnnGuesser.load('output/guesser/7')
-RnnGuesserLocal.web_api()
+RnnGuesserLocal = qanta.guesser.rnn.RnnGuesser.load('output/guesser/qanta.guesser.rnn.RnnGuesser/7')
+RnnGuesserLocal.web_api(poirt=6000)
 ```
+
+Navigate to `localhost:7000`
 
 
 ## Project Structure
 
 There are three main pieces of code that run the service. Each one is described below. There is additional parsing and postprocessing code described at the end.
-
-import qanta.guesser.rnn
-RnnGuesserLocal = qanta.guesser.rnn.RnnGuesser.load('output/guesser/7')
-RnnGuesserLocal.web_api()
 
 ## Main Interface
 
