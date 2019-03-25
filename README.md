@@ -19,7 +19,7 @@ Then you need to launch QANTA. I use the following code to launch the RNN guesse
 ```
 import qanta.guesser.rnn 
 RnnGuesserLocal = qanta.guesser.rnn.RnnGuesser.load('output/guesser/qanta.guesser.rnn.RnnGuesser/7')
-RnnGuesserLocal.web_api(poirt=6000)
+RnnGuesserLocal.web_api(port=6000)
 ```
 
 Navigate to `localhost:7000`
