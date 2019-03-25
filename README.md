@@ -1,8 +1,8 @@
 # Trick Me If You Can: Adversarial Writing of Trivia Challenge Questions
 
-Official code for the interface in ```Trick Me If You Can: Adversarial Writing of Trivia Challenge Questions```, [preprint](https://arxiv.org/abs/1809.02701) and early version at 2018 ACL Student Research Workshop.
+Official code for the interface in ```Trick Me If You Can: Human-in-the-loop Generation of Adversarial Question Answering Examples```, [preprint](https://arxiv.org/abs/1809.02701) in TACL 2019.
 
-This is an interactive user interface for creating question-answer pairs that are difficult (adversarial) for computers to answer. The goal is for users to either write unique questions, or to reformulate existing questions, such that they adversarially break a question answering system. The underlying computer system is based on [QANTA](https://github.com/Pinafore/qb), a deep-learning Question Answering system. The interface can be naturally extended to other NLP tasks.
+This is an interactive user interface for creating question-answer pairs that are difficult (adversarial) for computers to answer. The goal is for users to either write unique questions, or to reformulate existing questions, such that they adversarially break a question answering system. The underlying computer QA system is based on [QANTA](https://github.com/Pinafore/qb). The interface can be naturally extended to other NLP tasks.
 
 See the [competition site](https://sites.google.com/view/qanta/home) for more information on our Question Answering competition, and [our paper](https://arxiv.org/abs/1809.02701) for more information on the project. 
 
@@ -14,10 +14,7 @@ To run the server with multiple workers, go the the folder ```/interface```, and
 
 Then launch the non_qanta server, inside ```/non_qanta``` run ```python server.py```.  
 
-Then you need to launch QANTA. 
-
-I use the following code to launch the RNN guesser.
-
+Then you need to launch QANTA. I use the following code to launch the RNN guesser.
 ```
 import qanta.guesser.rnn 
 RnnGuesserLocal = qanta.guesser.rnn.RnnGuesser.load('output/guesser/7')
