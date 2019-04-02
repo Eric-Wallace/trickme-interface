@@ -21,18 +21,44 @@
         <script src="https://cdn.jsdelivr.net/npm/js-cookie@2/src/js.cookie.min.js"></script>
 
         <!-- imported CSS/Js files from static -->
-        <script src="{{ url_for('static', filename='js/scripts.js') }}"></script>
+        <script src="{{ url_for('static', filename='js/scripts2.js') }}"></script>
         <link rel="stylesheet" href="{{ url_for('static', filename='css/master.css') }}" />
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
         <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
         <link href="{{ url_for('static', filename='css/introjs.css') }}" rel="stylesheet">
         <script src="{{ url_for('static', filename='js/intro.js') }} "></script>
 
+        <!-- highlight-within-textarea CSS/JS -->
+        <link href="{{ url_for('static', filename='css/jquery.highlight-within-textarea.css') }} " rel="stylesheet">
+        <script src="{{ url_for('static', filename='js/jquery.highlight-within-textarea.js') }} "></script>
+
+
         <!-- twitter typeahead styles -->
         <script src="{{ url_for('static', filename='js/typeahead.jquery.min.js') }} "></script>
         <script src="{{ url_for('static', filename='js/FuzzySearch.min.js') }} "></script>
         <link href="{{ url_for('static', filename='css/FuzzySearch.css') }} " rel="stylesheet">
 
+        <!-- custom styles for highlight-within-textarea -->
+        <style>
+        .hwt-container {
+            background-color: #FFFFFF;
+        }
+        .hwt-content {
+            width: 800px;
+            height: 200px;
+            padding: 20px;
+            border: 1px solid border-color;
+            color: inherit;
+            font: 18px/25px 'Droid Sans Mono', sans-serif;
+        }
+        .hwt-input:focus {
+            outline-color: #495057;
+        }
+        .hwt-content mark {
+            border-radius: 3px;
+            background-color: #E2E512;
+        }     
+    </style>
 </head>
 <body>   
 
@@ -85,23 +111,31 @@
       <div class="w3-container">
         <br>
         <p style="text-align:left">
-            <h6> Writing questions for Quiz Bowl is not easy! This interface is here to help you write better questions with the help of Machine Learning. 
+            <h6> Writing fun and unique questions for Quiz Bowl is not an easy task! This interface is here to help you write better questions with the help of Machine Learning. 
             </h6>
         </p> 
 
         <p style="text-align:left">
             <h6>
-                The interface is integrated with a computerized Question Answering system. It will provide its best guesses for your questions, <b>try to trick it!</b> You can see the evidence it may be using for making its guesses.
+                The interface is integrated wth QANTA, a computerized Question Answering system. QANTA will provide its best guesses for your questions, <b>try to trick it!</b> You can see the evidence it may be using for making its guesses.
             </h6>
         </p>
 
-    <p style="text-align:left">
-        <h6>
-            Create an account or login using a username and password below. We will be using the email you enter for prizes! See <b><a target="_blank" style="color: blue;" href="https://sites.google.com/view/qanta/dec-15-2018">this website</a> </b> for details about our December 15th event.
+        <h6> 
+            For contact, reach out to Eric Wallace at ewallac2@umd.edu and Jordan Boyd-Graber at jbg@boydgraber.org.
         </h6>
     </p>
 
     <p style="text-align:left">
+        <h6>
+            Create an account or login using a username and password below. We will be using the email you enter for prizes! See <b><a target="_blank" style="color: blue;" href="http://www.qanta.org">this website</a> </b> for prize details.
+        </h6>
+    </p>
+
+    <p style="text-align:left">
+        <h6>
+            We plan to release the first round of anonymized data to the public on August 15th. If you are using this interface to write a tournament that is after August 15th, you may want <b>check the Don't Release Questions Box</b> in the bottom left of the interface.
+        </h6>
     </p>
 
     <h6 id="invalidEmail" style="display:inline-block;"></h6>
@@ -157,14 +191,14 @@ tutorial to help get familiar with the interface." data-position='auto'>
 <!-- The Setting Box in the bottom left of the inferace. Has check boxes and sliders to adjust setting.
 Also has the newQuestion() button, which restarts with a new question (new unique question if you are in unique mode, new rewrite question
 if you are in rewrite mode). Also has a button to switch which mode you are in (unique or rewrite).-->
-<div id="instruction_card" class="card card-outlin-primary mt-3">
+<div id="instruction_card" class="card card-outlin-primary mt-3" data-step="6" data-intro="If you are writing questions for a tournament that is <i>after</i> August 15th, consider checking the box to not release them publicly.">
     <div class="card-body mx-2 my-2">
         <h5 class="card-title">
             <i class="fa fa-info-circle" aria-hidden="true"></i> Settings
         </h5>
-        <!--<div class="checkbox">
+        <div class="checkbox">
             <label><input type="checkbox" id="no_public_data" >Don't release questions (releasing Aug. 15th) </label>
-        </div> -->
+        </div>
         <!-- Disable feature of highlighting words inside text boxes, didn't work well when I tried. It was also kind of ugly -->
         <!-- <div class="checkbox">
             <label><input type="checkbox" id="highlight_textbox">Highlight words inside Question Box</label>
@@ -206,22 +240,7 @@ if you are in rewrite mode). Also has a button to switch which mode you are in (
                 transparent; box-shadow: none; opacity: 1; background: none 0% 0% /
                 auto repeat scroll padding-box border-box rgb(255, 255, 255);"
                 dir="ltr"><input id="answer_area" class="twitter-typeahead tt-input"
-                name="answer_area" type="text" placeholder="Press enter to submit" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: system-ui; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><div class="tt-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"></div></span></div>  
-
-                <div class="dropdown" style="display:inline-block;">
-                <button class="btn btn-info dropdown-toggle" type="button" id="category_selector" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Category
-                </button>
-                  <div class="dropdown-menu" aria-labelledby="categoryDropdown">
-                    <a class="dropdown-item" onclick="categoryOne();" id = "category_selector_1">Literature</a>
-                    <a class="dropdown-item" onclick="categoryTwo();" id = "category_selector_2">History</a>
-                    <a class="dropdown-item" onclick="categoryThree();" id = "category_selector_3">Science</a>
-                    <a class="dropdown-item" onclick="categoryFour();" id = "category_selector_4">Fine Arts</a>                                
-                    <a class="dropdown-item" onclick="categoryFive();" id = "category_selector_5">Religion, Mythology, Philosophy, and Social Science</a>
-                    <a class="dropdown-item" onclick="categorySix();" id = "category_selector_6">Current Events, Geography, and General Knowledge</a>
-                </div>
-                </div>
-
-
+                name="answer_area" type="text" placeholder="Press enter to submit" spellcheck="false" dir="auto" style="position: relative; vertical-align: top; background-color: transparent;"><pre aria-hidden="true" style="position: absolute; visibility: hidden; white-space: pre; font-family: system-ui; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; word-spacing: 0px; letter-spacing: 0px; text-indent: 0px; text-rendering: auto; text-transform: none;"></pre><div class="tt-menu" style="position: absolute; top: 100%; left: 0px; z-index: 100; display: none;"></div></span></div>            
                 <button onclick="exitGame();" id = "exitButton" style='left: 10px; visibility:hidden' type="button" class="btn btn-info float-right w3-teal"> Exit and Finish</button>
                 <button onclick="editExisting();" id = "editButton" style='visibility:hidden' type="button" class="btn btn-info w3-teal"> Edit Your Submissions</button>
                 <button onclick="rewriteExisting();" id = "modalRewriteButton" style='visibility:hidden' type="button" class="btn btn-info w3-teal"> Rewrite Existing Question</button> 
@@ -237,7 +256,7 @@ if you are in rewrite mode). Also has a button to switch which mode you are in (
         <h4 class="card-title"><h7 id="question_answer" style="display:inline-block;"></h7> <button onclick="submit();" type="button" id = "submitButton" class="btn btn-info float-right">Submit <i class ="fa fa-upload blackiconcolor "> </i> </button>  </h4> <br>            
         <div contenteditable="true" id = "questionText"  class="form-control" style="font-size: 18px; color:#000000; height: auto; min-height: 150px;" rows="5" spellcheck = "true" id="questionText" placeholder="Your question..">  </div>
         <br>
-        <h7 id="bellBar" data-step="4" data-intro="The <b><mark data-entity=buzz>Buzz</b></mark> indicates where the AI system would buzz on your question." style="display:inline-block;"></h7> 
+        <h7 id="bellBar" data-step="4" data-intro="The <b><mark data-entity=buzz>Buzz</b></mark> indicates where the AI system would buzz on your question." style="display:inline-block;"></h7>
     </div>
 
     <!-- The area where the evidence is shown. Also contains the dropbown button to select evidence, the moreEvidence button.-->
@@ -257,35 +276,26 @@ if you are in rewrite mode). Also has a button to switch which mode you are in (
         </div>
     </span>
 
-    <!-- <button onclick="moreEvidence();" id = "moreEvidence" type="button" style = "font-size: 15px;" class="btn btn-info float-right"> More Evidence </button> </h4>    -->
+    <button onclick="moreEvidence();" id = "moreEvidence" type="button" style = "font-size: 15px;" class="btn btn-info float-right"> More Evidence </button> </h4>   
 
     <!-- Evidence is the evidence from the training data. Sentences are the sentences from your question-->
-<!--    <div class = "row"> <div class="col-lg-6 text-center"><b>Your Question</b><h7 style="display:inline-block;"></h7> </div>  
-    <div class="col-lg-6 text-center"><b>Evidence</b><h7 style="display:inline-block;"></h7> </div> </div> -->
-
-    <div class = "row"> <div class="col-lg-12 text-center"><b>Evidence</b><h7 style="display:inline-block;"></h7> </div> </div>
-
-    <div class = "rowFlex"> <div class="col-lg-12"> <h7 id="Sentence1" ></h7> </div> 
-    <!-- <div class="col-lg-6"><h7 id="Evidence1" style="display:inline-block;"></h7> </div> --> 
-    </div>
-<div class = "rowFlex"> <div class="col-lg-12"><h7 id="Sentence2"></h7> </div> 
-<!-- <div class="col-lg-6"><h7 id="Evidence2" style="display:inline-block;"></h7> </div> -->
+    <div class = "row"> <div class="col-lg-6 text-center"><b>Your Question</b><h7 style="display:inline-block;"></h7> </div>  
+    <div class="col-lg-6 text-center"><b>Evidence</b><h7 style="display:inline-block;"></h7> </div> </div>
+    <div class = "rowFlex"> <div class="col-lg-6"> <h7 id="Sentence1" style="display:inline-block;"></h7> </div> 
+    <div class="col-lg-6"><h7 id="Evidence1" style="display:inline-block;"></h7> </div>
 </div>
-<div class = "rowFlex"> <div class="col-lg-12"><h7 id="Sentence3"></h7> </div> 
-<!-- <div class="col-lg-6"><h7 id="Evidence3" style="display:inline-block;"></h7> </div> -->
-</div>
-<div class = "rowFlex"> <div class="col-lg-12"><h7 id="Sentence4"></h7> </div> 
-<!-- <div class="col-lg-6"><h7 id="Evidence4" style="display:inline-block;"></h7> </div> -->
-</div>
-<div class = "rowFlex"> <div class="col-lg-12"><h7 id="Sentence5"></h7> </div> 
-<!-- <div class="col-lg-6"><h7 id="Evidence5" style="display:inline-block;"></h7> </div> -->
-</div>
+<div class = "rowFlex"> <div class="col-lg-6"><h7 id="Sentence2" style="display:inline-block;"></h7> </div> 
+<div class="col-lg-6"><h7 id="Evidence2" style="display:inline-block;"></h7> </div> </div>
+<div class = "rowFlex"> <div class="col-lg-6"><h7 id="Sentence3" style="display:inline-block;"></h7> </div> 
+<div class="col-lg-6"><h7 id="Evidence3" style="display:inline-block;"></h7> </div> </div>
+<div class = "rowFlex"> <div class="col-lg-6"><h7 id="Sentence4" style="display:inline-block;"></h7> </div> 
+<div class="col-lg-6"><h7 id="Evidence4" style="display:inline-block;"></h7> </div> </div>
+<div class = "rowFlex"> <div class="col-lg-6"><h7 id="Sentence5" style="display:inline-block;"></h7> </div> 
+<div class="col-lg-6"><h7 id="Evidence5" style="display:inline-block;"></h7> </div> </div>
 </div>
 </div>
 
-<h7 id='questionLengthCount' class = 'float-right'></h7> 
 </div>
-
 
 <div class="col-md-3">  <!-- End of the middle column -->
 
@@ -349,14 +359,6 @@ if you are in rewrite mode). Also has a button to switch which mode you are in (
         onInput();
     });    
     function onInput(){
-        var text = document.getElementById("questionText").textContent;
-        if (text.length < 200 || text.length > 700){
-            document.getElementById('questionLengthCount').innerHTML = '<font color=\"red\">Question Length: ' + String(text.length) + '</font>';
-        }
-        else {
-            document.getElementById('questionLengthCount').innerHTML = '<font color=\"green\">Question Length: ' + String(text.length) + '</font>';
-	}
-       
         $('#updateButton').prop('disabled',false).css('opacity',1.0);
         $('#submitButton').prop('disabled',false).css('opacity',1.0);
     if(document.getElementById('enable_auto_updates').checked) {  // if automatic button is checked
@@ -410,7 +412,28 @@ if you are in rewrite mode). Also has a button to switch which mode you are in (
             document.getElementById("password_area").addEventListener("keyup", function(event) {
                if (event.keyCode === 13) {                    
                 email_value = document.getElementById("email_area").value;
-                validateEmail(email_value);                
+                if (validateEmail(email_value)){                        
+                    document.getElementById('overviewModal').style.display = "none";              
+                    pass = document.getElementById("password_area").value;
+                    $.post("storeEmail", {email: email_value, password: pass},
+                        function(data, status){   
+                            Cookies.set('email', data, {expires: 1}); // set email cookie
+                            introJs().start();   // start tutorial
+                            introJs.fn.oncomplete(function() {
+                                begin();  // when tutorial completes, get things ready
+                                refresh();
+                            });
+                            introJs.fn.onexit(function() {
+                                begin(); // if they skip the tutorial, get things ready
+                                refresh();
+                            });
+                            pass = "";
+                        });                                                   
+                    pass = "";     
+                }
+                else{
+                    document.getElementById('invalidEmail').innerHTML = "Please enter a valid email";              
+                }
             }
         })
 
@@ -418,7 +441,28 @@ if you are in rewrite mode). Also has a button to switch which mode you are in (
             document.getElementById("email_area").addEventListener("keyup", function(event) {
                if (event.keyCode === 13) { // if they hit enter                    
                 email_value = document.getElementById("email_area").value;
-                validateEmail(email_value);                
+                if (validateEmail(email_value)){                        
+                    document.getElementById('overviewModal').style.display = "none";              
+                    pass = document.getElementById("password_area").value;
+                    $.post("storeEmail", {email: email_value, password: pass},
+                        function(data, status){   
+                            Cookies.set('email', data, {expires: 1});
+                            introJs().start();
+                            introJs.fn.oncomplete(function() {
+                                begin();
+                                refresh();
+                            });
+                            introJs.fn.onexit(function() {
+                                begin();
+                                refresh();
+                            });
+                            pass = "";
+                        });                                                   
+                    pass = "";     
+                }
+                else{
+                    document.getElementById('invalidEmail').innerHTML = "Please enter a valid email";              
+                }
             }
         })
 

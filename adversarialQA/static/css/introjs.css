@@ -1,7 +1,5 @@
 /* Boiler plate copied from internet. Used for the tutorial shown at the beginning of the 
-interface. You probably do not need to edit. */ 
-
-
+interface */ 
 .introjs-overlay {
   position: absolute;
   box-sizing: content-box;

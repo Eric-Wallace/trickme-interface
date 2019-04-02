@@ -27,7 +27,7 @@ evidenceStore = {}
 ID = {}
 
 host='0.0.0.0'
-port = 7000  # port 7000 is the web user, 6000 is QANTA, 8000 is the non-qanta server
+port = 7000  # port 7000 is the web user, 5000 is QANTA, 8000 is the non-qanta server
 debug = False 
 
 submitted_answers = pickle.load(open('submitted_answers.pkl','rb'))
@@ -46,7 +46,7 @@ my_log.addHandler(hdlr)
 # Launch app
 @app.route('/')
 def output():
-    return render_template('server.html')
+    return render_template('adversarial.html')
 
 # load existing question if necessary and stores user information
 @app.route('/begin', methods = ['POST'])
@@ -112,15 +112,14 @@ def rewrite():
         log(email_val, "REWRITE", time, "None", '-1')
         return "None"
 
-# Saves users submission into logs
+# Tells non_neural server to delete ID from list and then saves users response into logs
 @app.route('/submit', methods = ['POST'])
 def submit():
     email_val = request.form['email']
     private_data = request.form['private_data']
-    log(email_val, "CATEGORY", request.form['time'], request.form['category'], "None")
     log(email_val, "PRIVATE", request.form['time'], private_data, "None")
     log(email_val, "SUBMIT", request.form['time'], request.form['text'], request.form['answer'])
- 
+    
     dumpFiles(email_val)
     return "finish"
 
@@ -131,11 +130,12 @@ def predictorES():
     question = request.form['text']
     answer = request.form['answer']
     email_val = request.form['email']
-    QANTA_guesses = requests.post("http://0.0.0.0:6000/api/interface_answer_question",  data={'text': question, 'answer': answer, 'bell': 'false'})
+    QANTA_guesses = requests.post("http://0.0.0.0:5000/api/interface_answer_question",  data={'text': question, 'answer': answer, 'bell': 'false'})
     # Convert returned value to list
     qanta_guesses_list = QANTA_guesses.json()
     doc_names = []
     doc_scores = []
+    print(qanta_guesses_list)
     if(len(qanta_guesses_list['guess']) == 0):
         return "Empty"
     for i in range(len(qanta_guesses_list['guess'])):
@@ -173,7 +173,7 @@ def placeBell():
     while first<=last:
         midpoint = (first + last)//2
         firstHalfQuestion = question[0:midpoint+1]
-        QANTA_guesses = requests.post("http://0.0.0.0:6000/api/interface_answer_question",  data={'text': ' '.join(firstHalfQuestion), 'answer': answer, 'bell': 'true'})
+        QANTA_guesses = requests.post("http://0.0.0.0:5000/api/interface_answer_question",  data={'text': ' '.join(firstHalfQuestion), 'answer': answer, 'bell': 'true'})
         if (QANTA_guesses.text == "Num0"):
             first = midpoint + 1
             continue
@@ -235,7 +235,6 @@ def highlight():
     fourth_return_highlighted = []
 
     # itnrates over first 5 sentences
-    rnn_returnVal = []
     for index, sentence in enumerate(tokenizer.tokenize(question)):
     #parsed = nlp(question)
     #for index, sentence in enumerate(parsed.sents):
@@ -244,7 +243,7 @@ def highlight():
         #sentence = sentence.text   
         
         # gets higlights from qb
-        response = requests.post("http://127.0.0.1:6000/api/interface_get_highlights", data={'text': sentence, 'guessForEvidence': guessForEvidence})
+        response = requests.post("http://127.0.0.1:5000/api/interface_get_highlights", data={'text': sentence, 'guessForEvidence': guessForEvidence})
         if (response.text == "Num0"):
             return_highlighted.append("No evidence")
             question_highlight_list.append("null")
@@ -289,9 +288,7 @@ def highlight():
             fourth_source_indicator.append(" ")
 
             continue
-       
-        rnn_returnVal.append(text['visual'])
-        continue
+        
         # removes stopwords from REST returned highlighted list
         highlighted = [h.replace("<em>","<mark>").replace("</em>","</mark>") for h in highlighted]
         for h_index, h in enumerate(highlighted):
@@ -379,21 +376,37 @@ def highlight():
                 else:
                     exit("da fuck")
         
-        all_highlights.extend(temp_all_highlights) 
-   
-    rnn_returnVal.append(" ")
-    rnn_returnVal.append(" ") 
-    rnn_returnVal.append(" ") 
-    return QANTA_answer + "***" + '***'.join(rnn_returnVal)
+
+        #temp_all_highlights[:] = [(_,_,x,_) for (_,_,x,_) in temp_all_highlights if highlighted[max_index] != x]
+        all_highlights.extend(temp_all_highlights)  
     email_val = request.form['email']
-      
+    
+    # #if len(return_highlighted) < 5:
+    # all_highlights = sorted(all_highlights, key=lambda x: -1 * x[0])
+    # for c, sentence_ind, j, t_q_h_l, sourc in all_highlights:
+    #   #if len(return_highlighted) == 5:
+    #   #   break
+    #   #else:      
+    #   if j not in return_highlighted and c != 0:
+    #       return_highlighted.append(j)
+    #       #question_highlight_list.append(t_q_h_l)
+    #       sentence_index.append(str(sentence_ind))
+    #       source_indicator.append(sourc)
+
+    #return_highlighted = [x for _,x in sorted(zip(sentence_index,return_highlighted))]
+    #question_highlight_list = [x for _,x in sorted(zip(sentence_index,question_highlight_list))]
+    #source_indicator = [x for _,x in sorted(zip(sentence_index,source_indicator))]
+    #sentence_index = sorted(sentence_index)
+
     sentences_selected = []
     second_sentences_selected = []
     third_sentences_selected = []
     fourth_sentences_selected = [] 
     
-    temp_sentences = tokenizer.tokenize(question)    
-    for si in sentence_index:                
+    temp_sentences = tokenizer.tokenize(question)
+    #temp_sentences = list(nlp(question).sents)
+    for si in sentence_index:
+                #sentences_selected.append(temp_sentences[int(si)-1].text)
         sentences_selected.append(temp_sentences[int(si)-1])
         second_sentences_selected.append(temp_sentences[int(si)-1])
         third_sentences_selected.append(temp_sentences[int(si)-1])
@@ -411,6 +424,7 @@ def highlight():
     while len(fourth_return_highlighted) < 5:
         fourth_return_highlighted.append(" ")
         fourth_sentences_selected.append(" ")
+
 
     first_question_highlight_set = set()
     second_question_highlight_set = set()
@@ -478,9 +492,9 @@ def highlight():
     if (email_val != "BEGIN_EMAIL"):
         evidenceStore[email_val] = pickle.load(open("evidenceStore/" + email_val + ".pkl",'rb'))
         evidenceStore[email_val]["evidence1"] = returnVal
-        evidenceStore[email_val]["evidence2"] = "None"#second_returnVal
-        evidenceStore[email_val]["evidence3"] = "None"#third_returnVal
-        evidenceStore[email_val]["evidence4"] = "None"#fourth_returnVal    
+        evidenceStore[email_val]["evidence2"] = second_returnVal
+        evidenceStore[email_val]["evidence3"] = third_returnVal
+        evidenceStore[email_val]["evidence4"] = fourth_returnVal    
         pickle.dump(evidenceStore[email_val], open("evidenceStore/" + email_val + ".pkl",'wb'))    
 
     log(email_val, "HIGHLIGHT", request.form['time'], question, returnVal)
@@ -490,7 +504,6 @@ def highlight():
 # a backup method for storing submissions that just pickles the results
 @app.route('/set_submitted', methods=['POST'])
 def set_submitted():
-    print(request.form['category'])
     email = request.form['email']
     editID = int(request.form['editID'])
     question_answer = request.form['question_answer']
@@ -539,29 +552,6 @@ def more_evidence():
         return returnVal
     except:         
         return "None"   
-
-# takes the users email and password, hashes it, and sends it back
-@app.route('/checkEmail', methods=['POST'])
-def checkEmail():
-    email = request.form['email']
-    password = request.form['password']
-    print(email)
-    print(password)
-    hashGen = hashlib.sha512()
-    hashGen.update((email + password).encode('utf-8'))
-
-    myHash = hashGen.hexdigest()
-
-    submitted_emails = pickle.load(open("submitted_emails.pkl","rb"))
-    foundMe = False
-    for em, ha in submitted_emails:
-        if ha == myHash:
-            return 'true'
-        elif email == em:
-            foundMe = True
-    if foundMe:
-        return 'false'
-    return 'true'
 
 # takes the users email and password, hashes it, and sends it back
 @app.route('/storeEmail', methods=['POST'])

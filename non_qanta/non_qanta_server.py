@@ -1,4 +1,5 @@
-# Backend server that handles searching past questions and loading questions to rewrite
+# Backend server that handles searching past questions
+# and loading questions to rewrite
 import itertools
 import sqlite3
 import os
@@ -17,11 +18,18 @@ from nltk.tokenize import word_tokenize
 import random
 
 app = Flask(__name__)
+app.run(host='0.0.0.0', port=8000, debug=False)
+dictionary = PyDictionary()
+
+highlight_color = '#ecff6d'
+highlight_prefix = '<span style="background-color: ' + highlight_color + '">'
+highlight_suffix = '</span>'
+highlight_template = highlight_prefix + '{}' + highlight_suffix
 
 stop_words = set(sw.words('english'))
 chars = ".,;?!\'"
 
-with open('dev_questions.pickle', 'rb') as handle:
+with open('existing_questions.pickle', 'rb') as handle:
 	existing_questions = pickle.load(handle)
 
 # returns number of ngrams in common and a list of the common ngrams
@@ -33,7 +41,6 @@ def compareNGrams(ngrams1, ngrams2):
          common = common + 1
          highlight_list.append(grams1)
     return common, highlight_list
-
 
 def join_punctuation(seq, characters='.,;?!\''):
     characters = set(characters)
@@ -51,8 +58,7 @@ def join_punctuation(seq, characters='.,;?!\''):
 
     yield current
 
-
-# searches past questions using current question text (questionText) and correct answer (query) and sorts the results by ngram overlap
+# searches past questions for query and sorts the results by ngram overlap
 def search_past_answers(query, questionText):
 	n = 2 # use bigrams
 	questionText = word_tokenize(questionText.lower())	
@@ -61,10 +67,10 @@ def search_past_answers(query, questionText):
 	query = query.split(" ") 
 	query = '_'.join(query) #place _ in between spaces as database has it
 
-	connection = sqlite3.connect('./data/qanta.2018.04.18.sqlite3', check_same_thread=False)
+	connection = sqlite3.connect('./data/non_naqt.db', check_same_thread=False)
 	cursor = connection.cursor()
 	# get id's of matching questions
-	cursor.execute('SELECT qanta_id FROM questions WHERE page == ? COLLATE NOCASE',   # find question where answer is query, ignoring cases
+	cursor.execute('SELECT id FROM questions WHERE page == ? COLLATE NOCASE',   # find question where answer is query, ignoring cases
 		(query,)
 		)
 	questions = cursor.fetchall() # get all results
@@ -81,7 +87,7 @@ def search_past_answers(query, questionText):
 	result = []
 	for index, question in enumerate(questions): 
 		cursor.execute(
-				"SELECT text FROM questions WHERE qanta_id == ? ",   # gather the raw text from the question
+				"SELECT raw FROM text WHERE question = ? ",   # gather the raw text from the question
 				(question,)
 			)
 		# turn the text into a list of sentences
@@ -128,7 +134,6 @@ def search_past_answers(query, questionText):
 		final_highlight_list.append(highlight_list)
 	return "**".join(tournaments) + "***" + "**".join(questions)
 	
-# fills the past questions area of the interface	
 @app.route('/api/search_answers', methods=['POST'])
 def answer_question():
 	question = request.form['text']
@@ -141,14 +146,12 @@ def getQuestion():
 	# get a new random question that QANTA gets correct
 	while (True):
 		index = random.randint(0,len(existing_questions)-1)  # rand index		
-		para_to_rewrite, answer = existing_questions[index]
+		rewrite, answer = existing_questions[index]
 		answer = answer.replace("_"," ")
-		# get QANTA's predictioin, if its not an error, then check the prediction is correct
-		QANTA_guesses = requests.post("http://0.0.0.0:6000/api/interface_answer_question",  data={'text': para_to_rewrite, 'answer': answer, 'bell': 'false'})		
+		QANTA_guesses = requests.post("http://0.0.0.0:5000/api/answer_question",  data={'text': rewrite, 'answer': answer, 'bell': 'false'})		
 		if QANTA_guesses.text == "Num0":
 			continue 
 		qanta_guesses_list = QANTA_guesses.json()
 		if not (len(qanta_guesses_list['guess']) == 0) and qanta_guesses_list['guess'][0] == answer:
-			return para_to_rewrite + "**" + str(index) + "**" + answer
+			return rewrite + "**" + str(index) + "**" + answer
 
-app.run(host='0.0.0.0', port=8000, debug=False)

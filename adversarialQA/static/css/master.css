@@ -78,8 +78,8 @@ highlighting inside the Evidence section */
 
 
 
-/* The following defines the colors for the
-highlighted words inside the "Evidence" section of the interface. The
+/* The following define the colors for the
+highlighting of words inside the Evidence section. The
 org, norp, and person names mean absolutely nothing. They
 are there because I copied them from an online demo that used that
 name. The different numbers, i.e. norp2 define different shades
@@ -184,4 +184,35 @@ different evidence panes (the ones you can cycle through by pressing
 [data-entity][data-entity="buzz"] {
     background: rgba(228,2,2,0.67);
     border-color: #634646;
+}
+
+
+/* Fonts that I downloaded and no longer use*/
+/* TODO ok to delete these? */
+@font-face {
+    font-family: 'Linux-Libertine'; /* normal */
+    src: url('https://write.qanta.org/static/LinLibertine_R.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Linux-Libertine'; /* italic */
+    src: url('https://write.qanta.org/static/LinLibertine_RI.woff') format('woff');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Linux-Libertine'; /* bold */
+    src: url('https://write.qanta.org/static/LinLibertine_RB.woff') format('woff');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Linux-Libertine'; /* bold */
+    src: url('https://write.qanta.org/static/LinLibertine_RBI.woff') format('woff');
+    font-weight: bold;
+    font-style: italic;
 }
