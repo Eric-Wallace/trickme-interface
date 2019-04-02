@@ -4,7 +4,7 @@ Official code for the interface in the [TACL 2019 paper](https://arxiv.org/abs/1
 
 This is an interactive user interface for creating question-answer pairs that are difficult (adversarial) for computers to answer. The goal is for users to either write unique questions, or to reformulate existing questions, such that they adversarially break a question answering system. The underlying computer QA system is based on [QANTA](https://github.com/Pinafore/qb). The interface can be naturally extended to other NLP tasks.
 
-![Interface Figure](trickme-interface/README_image.png)
+![Interface Figure](README_image.png)
 
 See the [competition site](https://sites.google.com/view/qanta/home) for more information on our Question Answering competition, and [our paper](https://arxiv.org/abs/1809.02701) for more information on the project. 
 
