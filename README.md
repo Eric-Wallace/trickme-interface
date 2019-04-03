@@ -48,7 +48,7 @@ Non-QANTA hosts two REST endpoints that the main interface uses. ```get_question
 
 ## QANTA
 
-QANTA is used for answering questions and generating the evidence that is highlighted in the interface. The current version of the interface uses the RNN guesser, though an elastic search version is available.
+QANTA is used for answering questions and generating the evidence that is highlighted in the interface. The current version of the interface uses the RNN guesser, though an elastic search version is available on a github branch.
 
 QANTA hosts two REST endpoints that the main interface uses. ```get_highlights``` and ```answer_question```. To get QANTA up and running, see that [repository](https://github.com/Pinafore/qb). The code to run the correct QANTA services is part of the web app API code. We also have docker containers available (see instructions to run the interface above).
 
