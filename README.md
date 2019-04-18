@@ -13,7 +13,7 @@ See the [competition site](https://sites.google.com/view/qanta/home) for more in
 1. I recommend using `screen`/`tmux` to launch the various servers, that way you do not need numerous terminals.
 2. Run `mkdir interface/evidenceStore interface/logs, interface/log_list`
 3. To run the server with multiple workers, go the the folder ```/interface```, and run using gunicorn (this command launches 4 parallel workers):  ```gunicorn --bind 0.0.0.0:7000 web_server:app --workers 4``` 
-4. And download the `qanta.2018.04.18.sqlite3` from [QANTA](https://github.com/Pinafore/qb)
+4. And download the `qanta.2018.04.18.sqlite3` from [QANTA](https://github.com/Pinafore/qb), placing it in ```/non_qanta/data```.
 5. Then launch the non_qanta server, inside ```/non_qanta``` run ```python server.py```.
 
 Then you need to launch QANTA. I use the following code to launch the RNN guesser. If you don't have a trained model you can use our docker container instead by running `docker TODO`
