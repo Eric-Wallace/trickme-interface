@@ -9,7 +9,7 @@ screen gunicorn --bind 0.0.0.0:7000 adversarial:app --workers 4
 screen ssh -L 8000:localhost:8000 aqwi01
 screen ssh -L 5000:localhost:5000 aqwi01
 
-ssh aqwi01`
+ssh aqwi01
 cd /scratch0/es_interface/adversarial-interface-divided/non_qanta
 source /scratch0/anaconda3/bin/activate
 screen python non_qanta_server.py
